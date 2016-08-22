@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Map Gallery</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/af-2.1.2/b-1.2.1/b-colvis-1.2.1/cr-1.3.2/r-2.1.0/sc-1.4.2/datatables.css"/>
+    <style>
+      body {
+        background-color: #27ae60 !important;
+        font-family: 'Open Sans', sans-serif !important;
+        color: white;
+      }
+      a {
+        color: #f1c40f !important;
+      }
+      #outerContainer {
+        max-width: 970px;
+        margin-right: auto;
+        margin-left: auto;
+        display: block;
+      }
+      #document-table {
+        margin: 0 auto;
+        overflow: visible;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="outerContainer">
+      <div id="document-table"></div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs-3.3.6/dt-1.10.12/af-2.1.2/b-1.2.1/b-colvis-1.2.1/cr-1.3.2/r-2.1.0/sc-1.4.2/datatables.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.4.3/tabletop.min.js"></script>
+    <script>
+    //Edit 'key' and 'columns' to connect your spreadsheet
+
+    //enter google sheets key here
+    var key =
+      "https://docs.google.com/spreadsheets/d/1lCi1kKiCXDmjp710u73C73hFjR3xVQCoscvbG6rgFjI/pubhtml";
+
+    //"data" refers to the column name with no spaces and no capitals
+    //punctuation or numbers in your column name
+    //"title" is the column name you want to appear in the published table
+    var columns = [
+    {
+      "data": "name",
+      "title": "Name",
+      "fnCreatedCell": function (nTd, sData, oData, iRow, iCol) {
+        $(nTd).html("<a href='"+oData.download+"' target='_blank'>"+oData.name+"</a>");
+      }
+    }, {
+      "data": "dimensions",
+      "title": "Dimensions (in)"
+    }, {
+      "data": "size",
+      "title": "Size (mb)"
+    }, {
+      "data": "update",
+      "title": "Last Updated"
+    }];
+
+    $(document).ready(function() {
+
+      function initializeTabletopObject() {
+        Tabletop.init({
+          key: key,
+          callback: function(data, tabletop) {
+            writeTable(data); //call up datatables function
+            console.log(data);
+            console.log(tabletop);
+          },
+          simpleSheet: true,
+          debug: false
+        });
+      }
+
+      initializeTabletopObject();
+
+      function writeTable(data) {
+        //select main div and put a table there
+        //use bootstrap css to customize table style: http://getbootstrap.com/css/#tables
+        $('#document-table').html(
+          '<table cellpadding="0" cellspacing="0" border="0" class="bordered responisve-table hover" id="mySelection"></table>'
+        );
+
+        //initialize the DataTable object and put settings in
+        $("#mySelection").DataTable({
+          "autoWidth": false,
+          "data": data,
+          "columns": columns,
+          "order": [
+            [1, "asc"],[2,"asc"],[0,"asc"]
+          ], //order on second column
+          "stateSave": true,
+          "pagingType": "simple" //no page numbers
+            //uncomment these options to simplify your table
+            //"paging": false,
+            //"searching": false,
+            //"info": false
+        });
+      }
+    });
+    //end of writeTable
+
+    </script>
+  </body>
+</html>
